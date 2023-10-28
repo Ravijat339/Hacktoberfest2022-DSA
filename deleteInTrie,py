@@ -1,0 +1,46 @@
+def delete_key(root, word): 
+	current_node = root 
+	last_branch_node = None
+	last_branch_char = 'a'
+
+	# loop through each character in the word 
+	for c in word: 
+		# if the current node doesn't have a child with the current character, 
+		# return False as the word is not present in Trie 
+		if current_node.childNode[ord(c) - ord('a')] is None: 
+			return False
+		else: 
+			count = 0
+			# count the number of children nodes of the current node 
+			for i in range(26): 
+				if current_node.childNode[i] is not None: 
+					count += 1
+
+			# if the count of children is more than 1, 
+			# store the node and the current character 
+			if count > 1: 
+				last_branch_node = current_node 
+				last_branch_char = c 
+
+			current_node = current_node.childNode[ord(c) - ord('a')] 
+
+	count = 0
+	# count the number of children nodes of the current node 
+	for i in range(26): 
+		if current_node.childNode[i] is not None: 
+			count += 1
+
+	# Case 1: The deleted word is a prefix of other words in Trie 
+	if count > 0: 
+		current_node.wordCount -= 1
+		return True
+
+	# Case 2: The deleted word shares a common prefix with other words in Trie 
+	if last_branch_node is not None: 
+		last_branch_node.childNode[ord(last_branch_char) - ord('a')] = None
+		return True
+
+	# Case 3: The deleted word does not share any common prefix with other words in Trie 
+	else: 
+		root.childNode[ord(word[0]) - ord('a')] = None
+		return True
